@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Калькулятор питьевого режима семьи</title>
+
+<style>
+/* =====================================================
+   СБРОС
+===================================================== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f4f8fc;
+  color:#222;
+  padding:20px;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  background:#ffffff;
+  padding:25px;
+  border-radius:18px;
+  box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+h1{
+  text-align:center;
+  color:#1565c0;
+  margin-bottom:10px;
+}
+
+.desc{
+  text-align:center;
+  color:#666;
+  margin-bottom:25px;
+}
+
+/* =====================================================
+   ФОРМА
+===================================================== */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  border:1px solid #cfd8dc;
+  border-radius:10px;
+  font-size:16px;
+}
+
+button{
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.btn-main{
+  background:#1565c0;
+  color:white;
+}
+
+.btn-main:hover{
+  background:#0d47a1;
+}
+
+.btn-green{
+  background:#2e7d32;
+  color:white;
+}
+
+.btn-green:hover{
+  background:#1b5e20;
+}
+
+.btn-red{
+  background:#e53935;
+  color:white;
+}
+
+.btn-red:hover{
+  background:#b71c1c;
+}
+
+/* =====================================================
+   КАРТОЧКИ
+===================================================== */
+.member-card{
+  margin-top:18px;
+  padding:18px;
+  background:#eef6ff;
+  border-left:5px solid #1565c0;
+  border-radius:14px;
+}
+
+.member-card h3{
+  margin-bottom:10px;
+}
+
+.row{
+  margin:6px 0;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px;
+}
+
+.ml-box{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+
+.ml-box input{
+  width:140px;
+}
+
+.progress{
+  margin-top:12px;
+  width:100%;
+  height:18px;
+  background:#dbe8f6;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.bar{
+  height:100%;
+  background:#42a5f5;
+}
+
+.summary{
+  margin-top:28px;
+  background:#e8f5e9;
+  padding:18px;
+  border-radius:14px;
+}
+
+.summary h2{
+  color:#2e7d32;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💧 Калькулятор питьевого режима семьи</h1>
+<p class="desc">
+Суточная норма воды рассчитывается: <strong>30 мл × 1 кг веса</strong>
+</p>
+
+<!-- =====================================================
+     ДОБАВЛЕНИЕ ЧЛЕНА СЕМЬИ
+===================================================== -->
+<div class="form-grid">
+
+<div>
+<label>Имя</label>
+<input type="text" id="name" placeholder="Ольга">
+</div>
+
+<div>
+<label>Возраст</label>
+<input type="number" id="age" placeholder="35">
+</div>
+
+<div>
+<label>Вес (кг)</label>
+<input type="number" id="weight" placeholder="65">
+</div>
+
+<div>
+<label>Пол</label>
+<select id="gender">
+<option value="woman">Женщина</option>
+<option value="man">Мужчина</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn-main" onclick="addMember()">Добавить члена семьи</button>
+
+<!-- СПИСОК -->
+<div id="members"></div>
+
+<!-- ОБЩИЙ ИТОГ -->
+<div class="summary">
+<h2>Общий итог семьи</h2>
+<p>Количество человек: <span id="count">0</span></p>
+<p>Суммарная норма воды: <span id="familyNorm">0</span> мл</p>
+<p>Всего выпито: <span id="familyDrank">0</span> мл</p>
+</div>
+
+</div>
+
+<script>
+/* =====================================================
+   ДАННЫЕ
+===================================================== */
+let family = [];
+
+/* =====================================================
+   НОРМА ВОДЫ
+===================================================== */
+function calcNorm(weight){
+  return weight * 30;
+}
+
+/* =====================================================
+   ГЛОТОК ПО ПОЛУ
+===================================================== */
+function sipVolume(gender){
+  if(gender === "man") return 35;
+  return 30;
+}
+
+/* =====================================================
+   ДОБАВИТЬ ЧЛЕНА СЕМЬИ
+===================================================== */
+function addMember(){
+
+  const name = document.getElementById("name").value.trim();
+  const age = Number(document.getElementById("age").value);
+  const weight = Number(document.getElementById("weight").value);
+  const gender = document.getElementById("gender").value;
+
+  if(!name || age <= 0 || weight <= 0){
+    alert("Заполните корректно все поля");
+    return;
+  }
+
+  const person = {
+    id: Date.now(),
+    name,
+    age,
+    weight,
+    gender,
+    norm: calcNorm(weight),
+    drank: 0
+  };
+
+  family.push(person);
+
+  clearForm();
+  render();
+}
+
+/* =====================================================
+   ОЧИСТКА ФОРМЫ
+===================================================== */
+function clearForm(){
+  document.getElementById("name").value = "";
+  document.getElementById("age").value = "";
+  document.getElementById("weight").value = "";
+}
+
+/* =====================================================
+   ДОБАВИТЬ ВОДУ
+===================================================== */
+function addWater(id, amount){
+
+  family = family.map(person => {
+    if(person.id === id){
+      person.drank += amount;
+    }
+    return person;
+  });
+
+  render();
+}
+
+/* =====================================================
+   ДОБАВИТЬ МЛ ИЗ ПОЛЯ
+===================================================== */
+function addCustomMl(id){
+
+  const input = document.getElementById("ml-" + id);
+  const value = Number(input.value);
+
+  if(value <= 0){
+    alert("Введите количество мл");
+    return;
+  }
+
+  addWater(id, value);
+  input.value = "";
+}
+
+/* =====================================================
+   УДАЛЕНИЕ
+===================================================== */
+function removeMember(id){
+  family = family.filter(person => person.id !== id);
+  render();
+}
+
+/* =====================================================
+   ОТРИСОВКА
+===================================================== */
+function render(){
+
+  const members = document.getElementById("members");
+  members.innerHTML = "";
+
+  let totalNorm = 0;
+  let totalDrank = 0;
+
+  family.forEach(person => {
+
+    totalNorm += person.norm;
+    totalDrank += person.drank;
+
+    let percent = Math.min(
+      Math.round((person.drank / person.norm) * 100), 100
+    );
+
+    members.innerHTML += `
+      <div class="member-card">
+
+        <h3>${person.name}</h3>
+
+        <div class="row">Возраст: ${person.age}</div>
+        <div class="row">Вес: ${person.weight} кг</div>
+        <div class="row">Пол: ${person.gender === "man" ? "Мужчина" : "Женщина"}</div>
+
+        <div class="row">
+          Суточная норма: <strong>${person.norm} мл</strong>
+        </div>
+
+        <div class="row">
+          Выпито сегодня: <strong>${person.drank} мл</strong>
+        </div>
+
+        <div class="row">
+          Выполнение нормы: <strong>${percent}%</strong>
+        </div>
+
+        <div class="progress">
+          <div class="bar" style="width:${percent}%"></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-green"
+            onclick="addWater(${person.id}, sipVolume('${person.gender}'))">
+            Глоток
+          </button>
+
+          <button class="btn-green"
+            onclick="addWater(${person.id},200)">
+            Стакан
+          </button>
+
+          <button class="btn-red"
+            onclick="removeMember(${person.id})">
+            Удалить
+          </button>
+        </div>
+
+        <div class="ml-box">
+          <input
+            type="number"
+            id="ml-${person.id}"
+            placeholder="Введите мл"
+          >
+
+          <button class="btn-main"
+            onclick="addCustomMl(${person.id})">
+            Добавить мл
+          </button>
+        </div>
+
+      </div>
+    `;
+  });
+
+  document.getElementById("count").textContent = family.length;
+  document.getElementById("familyNorm").textContent = totalNorm;
+  document.getElementById("familyDrank").textContent = totalDrank;
+}
+
+</script>
+
+</body>
+</html>

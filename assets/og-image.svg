@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#1d2f4f"/>
+    </linearGradient>
+    <linearGradient id="drop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="110" y="220" fill="#e5e7eb" font-size="76" font-family="Arial, sans-serif" font-weight="700">
+    HydroFamily
+  </text>
+  <text x="110" y="295" fill="#9fb3ca" font-size="38" font-family="Arial, sans-serif">
+    !5<59=K9 B@5:5@ 2>4K
+  </text>
+  <text x="110" y="355" fill="#9fb3ca" font-size="30" font-family="Arial, sans-serif">
+    >=B@>;L =>@<K 8 ?@>3@5AA0 :064K9 45=L
+  </text>
+  <path d="M930 120c0 0-140 150-140 250a140 140 0 0 0 280 0c0-100-140-250-140-250z" fill="url(#drop)"/>
+  <circle cx="930" cy="390" r="56" fill="#e6fbff" opacity="0.92"/>
+</svg>

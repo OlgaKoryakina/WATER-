@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Семейный учет воды</title>
+
+<style>
+:root{
+  --bg:#0f172a;
+  --bg-soft:#1e293b;
+  --card:#111827;
+  --line:rgba(148,163,184,.35);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#22d3ee;
+  --accent-strong:#06b6d4;
+  --danger:#fda4af;
+  --success:#86efac;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(165deg,var(--bg),#0b1220 45%,#0f172a);
+  color:var(--text);
+}
+
+.layout{
+  width:min(900px,92vw);
+  margin:32px auto;
+  display:grid;
+  gap:16px;
+}
+
+.card{
+  background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(17,24,39,.88));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+}
+
+h1,h2,p{margin:0}
+
+.hero h1{
+  margin-top:8px;
+  font-size:clamp(28px,5vw,42px);
+}
+
+.eyebrow{
+  color:var(--accent);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:700;
+}
+
+.muted{
+  margin-top:10px;
+  color:var(--muted);
+}
+
+.family-form{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+}
+
+.form-field{
+  display:grid;
+  gap:6px;
+}
+
+label{
+  font-size:14px;
+  color:#cbd5e1;
+}
+
+input,select,button{
+  font:inherit;
+}
+
+input,select{
+  min-height:44px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:var(--bg-soft);
+  color:var(--text);
+  padding:10px 12px;
+}
+
+button{
+  cursor:pointer;
+}
+
+.btn{
+  min-height:44px;
+  border:none;
+  border-radius:12px;
+  padding:10px 16px;
+  font-weight:700;
+  background:linear-gradient(120deg,var(--accent),var(--accent-strong));
+  color:#022c34;
+}
+
+#addMemberButton{
+  grid-column:1/-1;
+}
+
+.message{
+  margin-top:12px;
+  min-height:22px;
+  color:var(--danger);
+}
+
+.family-list{
+  list-style:none;
+  margin:14px 0 0;
+  padding:0;
+  display:grid;
+  gap:10px;
+}
+
+.family-list li{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  background:rgba(30,41,59,.55);
+}
+
+.member-header{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.member-name{
+  font-weight:700;
+}
+
+.member-type{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.member-stats{
+  margin-top:10px;
+  color:#dbeafe;
+  font-size:14px;
+}
+
+.member-actions{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.action-btn{
+  min-height:36px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:rgba(148,163,184,.14);
+  color:var(--text);
+  padding:8px 10px;
+}
+
+.action-btn:hover{
+  background:rgba(148,163,184,.24);
+}
+
+progress{
+  width:100%;
+  margin-top:12px;
+  height:14px;
+}
+
+.hint{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<main class="layout">
+
+<header class="card hero">
+  <p class="eyebrow">Трекер на каждый день</p>
+  <h1>Семейный учет питьевого режима</h1>
+  <p class="muted">
+    Добавляйте членов семьи и отмечайте выпитую воду.
+    Норма рассчитывается: 30 мл × 1 кг веса.
+  </p>
+</header>
+
+<section class="card">
+  <h2>Добавить члена семьи</h2>
+
+  <form id="familyForm" class="family-form">
+    <div class="form-field">
+      <label for="memberName">Имя</label>
+      <input id="memberName" type="text" required placeholder="Например: Ольга">
+    </div>
+
+    <div class="form-field">
+      <label for="memberType">Категория</label>
+      <select id="memberType">
+        <option value="man">Мужчина</option>
+        <option value="woman">Женщина</option>
+        <option value="teen">Подросток</option>
+        <option value="child">Ребенок</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label for="memberWeight">Вес (кг)</label>
+      <input id="memberWeight" type="number" min="1" max="300" required placeholder="68">
+    </div>
+
+    <button id="addMemberButton" class="btn" type="submit">
+      Добавить члена семьи
+    </button>
+  </form>
+
+  <p id="familyMessage" class="message"></p>
+
+  <p class="hint">
+    1 глоток: мужчина 30 мл, женщина 25 мл, подросток 25 мл, ребенок 12 мл.
+    1 стакан = 250 мл.
+  </p>
+</section>
+
+<section class="card">
+  <h2>Состав семьи</h2>
+  <ul id="familyList" class="family-list"></ul>
+</section>
+
+</main>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "familyWaterTrackerMembers_v2";
+const ML_PER_GLASS = 250;
+
+const SIP_ML_BY_TYPE = {
+  man:30,
+  woman:25,
+  teen:25,
+  child:12
+};
+
+const TYPE_LABELS = {
+  man:"Взрослый мужчина",
+  woman:"Взрослая женщина",
+  teen:"Подросток",
+  child:"Ребенок"
+};
+
+const dom = {
+  form:document.getElementById("familyForm"),
+  name:document.getElementById("memberName"),
+  type:document.getElementById("memberType"),
+  weight:document.getElementById("memberWeight"),
+  list:document.getElementById("familyList"),
+  message:document.getElementById("familyMessage")
+};
+
+let state = {
+  members:[]
+};
+
+function uid(){
+  return crypto.randomUUID();
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    if(Array.isArray(parsed.members)){
+      state.members = parsed.members;
+    }
+  }catch(e){}
+}
+
+function showMessage(text,error=false){
+  dom.message.textContent = text;
+  dom.message.style.color = error ? "#fda4af" : "#86efac";
+}
+
+function targetMl(weight){
+  return weight * 30;
+}
+
+function totalMl(member){
+  return member.sips * SIP_ML_BY_TYPE[member.type] +
+         member.glasses * ML_PER_GLASS;
+}
+
+function percent(member){
+  return Math.min(
+    Math.round(totalMl(member) / targetMl(member.weightKg) * 100),
+    100
+  );
+}
+
+function createButton(text,action){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "action-btn";
+  btn.dataset.action = action;
+  btn.textContent = text;
+  return btn;
+}
+
+function createCard(member){
+  const li = document.createElement("li");
+  li.dataset.id = member.id;
+
+  const header = document.createElement("div");
+  header.className = "member-header";
+
+  const name = document.createElement("span");
+  name.className = "member-name";
+  name.textContent = member.name;
+
+  const type = document.createElement("span");
+  type.className = "member-type";
+  type.textContent = TYPE_LABELS[member.type];
+
+  header.append(name,type);
+
+  const stats = document.createElement("div");
+  stats.className = "member-stats";
+  stats.textContent =
+    "Вес: " + member.weightKg + " кг | " +
+    "Норма: " + targetMl(member.weightKg) + " мл | " +
+    "Выпито: " + totalMl(member) + " мл (" + percent(member) + "%)";
+
+  const progress = document.createElement("progress");
+  progress.max = 100;
+  progress.value = percent(member);
+
+  const actions = document.createElement("div");
+  actions.className = "member-actions";
+
+  actions.append(
+    createButton("+1 глоток","add-sip"),
+    createButton("-1 глоток","remove-sip"),
+    createButton("+1 стакан","add-glass"),
+    createButton("-1 стакан","remove-glass"),
+    createButton("Удалить","remove-member")
+  );
+
+  li.append(header,stats,progress,actions);
+  return li;
+}
+
+function render(){
+  dom.list.innerHTML = "";
+
+  if(!state.members.length){
+    const li = document.createElement("li");
+    li.textContent = "Пока нет участников.";
+    dom.list.append(li);
+    return;
+  }
+
+  state.members.forEach(member=>{
+    dom.list.append(createCard(member));
+  });
+}
+
+dom.form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const name = dom.name.value.trim();
+  const type = dom.type.value;
+  const weight = Number(dom.weight.value);
+
+  if(!name){
+    showMessage("Введите имя.", true);
+    return;
+  }
+
+  if(!weight || weight < 1 || weight > 300){
+    showMessage("Введите корректный вес.", true);
+    return;
+  }
+
+  const duplicate = state.members.some(
+    m => m.name.toLowerCase() === name.toLowerCase()
+  );
+
+  if(duplicate){
+    showMessage("Такой участник уже существует.", true);
+    return;
+  }
+
+  state.members.push({
+    id:uid(),
+    name:name,
+    type:type,
+    weightKg:Math.round(weight),
+    sips:0,
+    glasses:0
+  });
+
+  save();
+  render();
+
+  dom.form.reset();
+  dom.name.focus();
+
+  showMessage(name + " добавлен.");
+});
+
+dom.list.addEventListener("click", function(e){
+  const btn = e.target.closest("[data-action]");
+  if(!btn) return;
+
+  const li = btn.closest("li");
+  if(!li) return;
+
+  const id = li.dataset.id;
+  const member = state.members.find(m => m.id === id);
+  if(!member) return;
+
+  const action = btn.dataset.action;
+
+  if(action === "add-sip") member.sips++;
+  if(action === "remove-sip") member.sips = Math.max(0, member.sips-1);
+  if(action === "add-glass") member.glasses++;
+  if(action === "remove-glass") member.glasses = Math.max(0, member.glasses-1);
+
+  if(action === "remove-member"){
+    if(confirm("Удалить участника?")){
+      state.members = state.members.filter(m => m.id !== id);
+      showMessage("Участник удален.");
+    }
+  }
+
+  save();
+  render();
+});
+
+load();
+render();
+</script>
+
+</body>
+</html>

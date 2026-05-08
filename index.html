@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Семейный трекер воды: учет питьевого режима, суточная норма и прогресс каждого участника.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="HydroFamily - Семейный трекер воды">
+  <meta property="og:description" content="Учет питьевого режима семьи с автосохранением и прогрессом по каждому участнику.">
+  <meta property="og:image" content="assets/og-image.svg">
+  <meta property="og:locale" content="ru_RU">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HydroFamily - Семейный трекер воды">
+  <meta name="twitter:description" content="Добавляйте участников и отслеживайте водный баланс всей семьи.">
+  <meta name="twitter:image" content="assets/og-image.svg">
+  <title>HydroFamily - Семейный трекер воды</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="logo" href="#top">HydroFamily</a>
+      <nav class="menu">
+        <a href="#features">Возможности</a>
+        <a href="#tracker">Трекер</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">Просто. Полезно. Для всей семьи.</p>
+          <h1>Следите за водным балансом каждый день</h1>
+          <p class="lead">
+            Добавляйте членов семьи, отмечайте глотки и стаканы, смотрите прогресс и общий итог.
+            Данные сохраняются в браузере автоматически.
+          </p>
+          <a class="btn btn-primary" href="#tracker">Начать учет</a>
+        </div>
+        <aside class="hero-card">
+          <h2>Как считается норма</h2>
+          <p><strong>30 мл x 1 кг веса</strong> - рекомендованная дневная цель.</p>
+          <p>Пример: при весе 60 кг дневная цель = 1800 мл.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2 class="section-title">Что уже умеет сайт</h2>
+        <div class="features">
+          <article class="feature-card">
+            <h3>Учет по участникам</h3>
+            <p>Отдельная карточка, норма и прогресс для каждого члена семьи.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Быстрые действия</h3>
+            <p>Кнопки +1/-1 глоток, +1/-1 стакан и удаление участника в один клик.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Локальное сохранение</h3>
+            <p>После перезагрузки страницы данные не пропадают.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="tracker" class="section">
+      <div class="container tracker-layout">
+        <section class="panel">
+          <h2>Добавить члена семьи</h2>
+          <form id="familyForm" class="form-grid">
+            <label>
+              Имя
+              <input id="memberName" type="text" required placeholder="Например: Ольга">
+            </label>
+
+            <label>
+              Категория
+              <select id="memberType">
+                <option value="man">Мужчина</option>
+                <option value="woman">Женщина</option>
+                <option value="teen">Подросток</option>
+                <option value="child">Ребенок</option>
+              </select>
+            </label>
+
+            <label>
+              Вес (кг)
+              <input id="memberWeight" type="number" min="1" max="300" required placeholder="68">
+            </label>
+
+            <button class="btn btn-primary full" type="submit">Добавить в список</button>
+          </form>
+          <p class="hint">1 стакан = 250 мл. Норма: 30 мл x вес (кг).</p>
+          <p id="familyMessage" class="message"></p>
+        </section>
+
+        <section class="panel">
+          <h2>Общий прогресс семьи</h2>
+          <div class="totals">
+            <p>Участников: <strong id="totalMembers">0</strong></p>
+            <p>Общая цель: <strong id="totalTarget">0 мл</strong></p>
+            <p>Выпито: <strong id="totalDrank">0 мл</strong></p>
+            <p>Выполнение: <strong id="totalPercent">0%</strong></p>
+          </div>
+          <progress id="familyProgress" max="100" value="0"></progress>
+          <div class="totals-actions">
+            <button id="resetDayButton" class="btn btn-secondary" type="button">Сбросить день</button>
+            <button id="clearAllButton" class="btn btn-secondary danger" type="button">Очистить всех</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="container">
+        <section class="panel">
+          <h2>Состав семьи</h2>
+          <ul id="familyList" class="family-list"></ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>HydroFamily · Домашний проект по учету воды</p>
+    </div>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
